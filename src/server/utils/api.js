@@ -1,7 +1,7 @@
 export const APIs = {
-  jonet: {
+  subandgain: {
     Authorization: process.env.JONET_API_KEY,
-    baseURL: 'https://jonet.com.ng/api_live/v1',
+    baseURL: 'https://subandgain.com/api',
   },
   alrahuz: {
     baseURL: 'https://alrahuzdata.com.ng/api',

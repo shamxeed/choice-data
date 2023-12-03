@@ -61,13 +61,9 @@ const Inputs = () => {
   const onSubmit = async (e) => {
     const id = Number(e.id);
 
-    let response;
-
-    const isShowmax = biller === 'dstvshowmax';
-
     const plan = plans.find((i) => i.id === id);
 
-    const { amount, type } = plan;
+    const { amount, type, title } = plan;
 
     const amount_with_charges = amount + 20;
 
@@ -88,15 +84,13 @@ const Inputs = () => {
     }
 
     try {
-      response = await axios({
+      const { data } = await axios({
         method: 'post',
         url: '/transaction/cables/get_info',
         data: { ...e, type },
       });
 
-      const { customer_name } = response?.details || {};
-
-      const customerTxt = isShowmax ? '' : `to ${customer_name}`;
+      const { customerName } = data || {};
 
       const ref = getCustomerId(first_name);
 
@@ -105,9 +99,9 @@ const Inputs = () => {
         ...plan,
         ref,
         myId,
-        pin: Number,
-        customer_name,
-        text: `(${name}) ${customerTxt} at ₦${amount} `,
+        pin: '',
+        customerName,
+        text: `(${title}) ${customerName} at ₦${amount} `,
       });
 
       onOpen();

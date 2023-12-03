@@ -4,6 +4,7 @@ import prismaEdge from '@/server/prismaEdge';
 import { myData, calc_user_balance } from '@/server/helpers';
 import { authorization } from '@/server/middleware/edgeAuth';
 import fetch from '@/server/fetch';
+import { get_cable_numeric_id } from '../helpers';
 
 export const runtime = 'edge';
 export const maxDuration = 30;
@@ -13,35 +14,43 @@ let userData;
 export async function POST(req) {
   const body = await req.json();
 
-  const { amount, plan } = body;
-
-  console.log(body);
+  const { id, amount, plan, account } = body;
 
   const api_response = `Your request to purchase ${plan} at ₦${amount} is successful!`;
 
   try {
-    const response = await authorization(prismaEdge, body);
+    const query = prismaEdge.plan.findUnique({
+      where: { id },
+    });
 
-    const { error, user, myId, msg, statusCode } = response;
+    const authOptions = { prismaEdge, query, body, is_plan: true };
+
+    const authRes = await authorization(authOptions);
+
+    const { error, user, myId, msg, statusCode, queryData } = authRes;
 
     if (error) {
       return NextResponse.json({ msg }, { status: statusCode });
     }
 
-    const new_amount = amount + 20;
+    const amount_with_charges = amount + 20;
 
-    const calcResults = calc_user_balance(user, new_amount);
+    const calcResults = calc_user_balance(user, amount_with_charges);
 
     const { new_balance, new_amount_spent, balance } = calcResults;
 
-    const data = await fetch({
-      rawBody: body,
-      url: '/multichoice/vend',
-    });
+    const { plan_id, type } = queryData;
 
-    const { details } = data.message;
+    const cablename = get_cable_numeric_id({ type });
 
-    const { trans_id } = details;
+    /*  await fetch({
+      url: '/cablesub/',
+      rawBody: {
+        cablename,
+        cableplan: plan_id,
+        smart_card_number: account,
+      },
+    }); */
 
     userData = await prismaEdge.user.update({
       where: { id: myId },
@@ -51,14 +60,14 @@ export async function POST(req) {
         transactions: {
           create: {
             plan,
+            new_balance,
             api_response,
             type: 'purchase',
-            amount: new_amount,
-            refrence: trans_id,
-            service: 'Cable TV Subscription',
             status: 'successful',
+            mobile_number: account,
             balance_before: balance,
-            new_balance: new_balance,
+            amount: amount_with_charges,
+            service: 'Cable TV Subscription',
           },
         },
       },

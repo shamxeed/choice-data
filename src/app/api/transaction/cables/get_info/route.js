@@ -8,20 +8,15 @@ export async function POST(req) {
 
   const { type, account } = body;
 
-  console.log(type, account);
-
   try {
     const id = get_cable_id({ type });
 
-    const data = await axios({
-      // provider: 'alrahuz',
-      url: `/validateiuc/?smart_card_number=${account}&cablename=${id}`,
-      method: 'get',
+    const { data } = await axios({
+      provider: 'subandgain',
+      url: `/verify_bills.php?username=shamxeed&apiKey=sag2f5j7hlioma4tgaaf4wz6wknurr3nf793fx432mafn1faq5pvs&service=${id}&smartNumber=${account}`,
     });
 
-    console.log(data);
-
-    return NextResponse.json({ msg: 'Hi' });
+    return NextResponse.json({ data });
   } catch (err) {
     console.log(err.message, 'eerr');
     return NextResponse.json({ msg: err.message }, { status: 500 });
