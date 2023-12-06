@@ -78,14 +78,18 @@ const Inputs = () => {
       return alertDisclosure.onOpen();
     }
 
+    const disco = plans.find((i) => i.title === e.service);
+
+    const { plan_id: disco_id } = disco;
+
     try {
-      const { details } = await axios({
+      const { data } = await axios({
         url: '/transaction/electricity/validate',
         method: 'POST',
-        data: e,
+        data: { ...e, disco_id },
       });
 
-      const { customer_name } = details;
+      const { name } = data;
 
       const ref = getCustomerId(first_name);
 
@@ -95,7 +99,8 @@ const Inputs = () => {
         ...details,
         ref,
         myId,
-        text: `with this meter number ${e.meter_number} ${customer_name} at ${e.amount}`,
+        disco_id,
+        text: `with this meter number ${e.meter_number} ${name} at ${e.amount}`,
       }));
 
       onOpen();

@@ -13,17 +13,25 @@ export const defaultPlans = {
   id: undefined,
   reseller_discount: '',
   api_discount: '',
+  plan: '',
 };
 
-export const getPlan = (value = defaultPlans) => {
-  return Object.keys(value).filter(
-    (key) =>
-      key !== 'is_disabled' &&
-      key !== 'type' &&
-      key !== 'network' &&
-      key !== 'provider' &&
-      key !== 'id'
-  );
+const fields = ['is_disabled', 'type', 'network', 'provider', 'id'];
+
+export const getPlan = (data) => {
+  const { value = defaultPlans, isData } = data || {};
+
+  let result;
+
+  if (isData) {
+    const new_fields = [...fields, 'plan'];
+
+    result = Object.keys(value).filter((key) => !new_fields.includes(key));
+  } else {
+    result = Object.keys(value).filter((key) => !fields.includes(key));
+  }
+
+  return result;
 };
 
 export const findPlanById = ({ bundles, plan_id, type }) => {
@@ -33,7 +41,7 @@ export const findPlanById = ({ bundles, plan_id, type }) => {
     selected = bundles.find((i) => i.type === type && i.plan_id === plan_id);
   }
 
-  return selected || defaultPlans;
+  return selected;
 };
 
 export const findPlan = (options) => {
@@ -53,7 +61,7 @@ export const findPlan = (options) => {
     selected = findPlanById(options);
   }
 
-  return selected || defaultPlans;
+  return selected;
 };
 
 export const services = [

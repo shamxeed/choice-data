@@ -21,7 +21,14 @@ import { useAxios } from '@/client/hooks/helpers';
 import { errMessage } from '@/client/utils/helpers';
 import { SubmitBtn } from '../../../Misc/form';
 import * as constants from '@/constants/Bundles';
-import { defaultForm, findPlan, getPlan, services, types_opt } from './helpers';
+import {
+  defaultForm,
+  findPlan,
+  getPlan,
+  services,
+  types_opt,
+  defaultPlans,
+} from './helpers';
 
 const { white } = colors;
 
@@ -40,7 +47,7 @@ const Inputs = ({ data }) => {
 
   const [plans, setPlans] = React.useState([]);
 
-  const [plan, setPlan] = React.useState('');
+  const [plan, setPlan] = React.useState(defaultPlans);
 
   const [myForm, setMyForm] = React.useState(defaultForm);
 
@@ -148,6 +155,10 @@ const Inputs = ({ data }) => {
 
     if (selected) {
       setPlan(selected);
+    } else {
+      const { plan_id, ..._plan } = defaultPlans;
+
+      setPlan(() => ({ ..._plan }));
     }
   }, [values]);
 
@@ -242,7 +253,7 @@ const Inputs = ({ data }) => {
             <>
               {/*************** PLAN SECTION ********************/}
 
-              {isData ? (
+              {isData && (
                 <>
                   <FormLabel fontWeight={700} mt={4}>
                     Plan <Asteriq>*</Asteriq>
@@ -262,42 +273,23 @@ const Inputs = ({ data }) => {
                     ))}
                   </Select>
                 </>
-              ) : (
-                <>
-                  <FormControl isInvalid={errors['plan']} key={'plan'}>
-                    <FormLabel fontWeight={700} mt={4}>
-                      Plan Name <Asteriq>*</Asteriq>
-                    </FormLabel>
-                    <Input
-                      size={'lg'}
-                      placeholder={`--Enter Plan Name here--`}
-                      {...register('plan', {
-                        required: 'This is required!',
-                      })}
-                    />
-                    <FormErrorMessage>
-                      {errors['plan']?.message}
-                    </FormErrorMessage>
-                  </FormControl>
-                </>
               )}
 
-              {plan &&
-                getPlan().map((key) => (
-                  <FormControl isInvalid={errors[key]} key={key}>
-                    <FormLabel fontWeight={700} mt={4}>
-                      {key} <Asteriq>*</Asteriq>
-                    </FormLabel>
-                    <Input
-                      size={'lg'}
-                      placeholder={`--Enter ${key} here--`}
-                      {...register(key, {
-                        required: 'This is required!',
-                      })}
-                    />
-                    <FormErrorMessage>{errors[key]?.message}</FormErrorMessage>
-                  </FormControl>
-                ))}
+              {getPlan().map((key) => (
+                <FormControl isInvalid={errors[key]} key={key}>
+                  <FormLabel fontWeight={700} mt={4}>
+                    {key} <Asteriq>*</Asteriq>
+                  </FormLabel>
+                  <Input
+                    size={'lg'}
+                    placeholder={`--Enter ${key} here--`}
+                    {...register(key, {
+                      required: 'This is required!',
+                    })}
+                  />
+                  <FormErrorMessage>{errors[key]?.message}</FormErrorMessage>
+                </FormControl>
+              ))}
 
               {/*************** DISABLED SECTION ********************/}
               <RadioGroup onChange={toggler} value={is_disabled}>

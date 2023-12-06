@@ -5,15 +5,21 @@ import { axios } from '@/server/axios';
 export async function POST(req) {
   const body = await req.json();
 
+  const { meter_number, meter_type, disco_id } = body;
+
   try {
     const { data } = await axios({
-      url: '/electricity/validate',
+      url: `/validatemeter?meternumber=${meter_number}&disconame=${disco_id}&mtype=${meter_type}`,
       rawBody: body,
     });
 
-    const { description, details } = data.message;
+    const { invalid, name } = data;
 
-    return NextResponse.json({ description, details });
+    if (invalid) {
+      return NextResponse.json({ msg: name }, { status: 400 });
+    }
+
+    return NextResponse.json({ data });
   } catch (err) {
     console.log(err.message);
     return NextResponse.json({ msg: err.message }, { status: 500 });
