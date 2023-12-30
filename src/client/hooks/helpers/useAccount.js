@@ -103,7 +103,7 @@ export const useAccount = () => {
   }; */
 
   const onLoad = () => {
-    // getMonnify();
+    getMonnify();
   };
 
   return { user, onLoad, accounts };

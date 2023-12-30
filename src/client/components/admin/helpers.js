@@ -1,6 +1,5 @@
 import {
   IoCashOutline,
-  IoPrintOutline,
   IoTimeOutline,
   IoPeopleOutline,
   IoRefreshOutline,
@@ -12,6 +11,7 @@ import {
   IoSettingsOutline,
   IoPhonePortraitOutline,
   IoFlashOutline,
+  IoCardOutline,
 } from 'react-icons/io5';
 
 import { colors } from '@/constants/themes';
@@ -48,12 +48,6 @@ export const btns = [
     title: 'Super Login',
     icon: <IoKeyOutline size={31} color={primary} />,
   },
-  /*  {
-    id: 4,
-    title: 'Load E-Pins',
-    screen: '/admin/load_pins',
-    icon: <IoPrintOutline size={30} color={primary} />,
-  }, */
   {
     id: '67s7s',
     title: 'Update Airtime',
@@ -68,9 +62,15 @@ export const btns = [
   },
   {
     id: 5,
-    title: 'Update / Create Plans',
-    screen: '/admin/plans/update',
+    title: 'Update / Create Data Plans',
+    screen: '/admin/plans/update/data',
     icon: <IoWifiOutline size={30} color={primary} />,
+  },
+  {
+    id: 57733,
+    title: 'Update / Create Bill Plans',
+    screen: '/admin/plans/update',
+    icon: <IoCardOutline size={30} color={primary} />,
   },
   {
     id: 6,

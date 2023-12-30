@@ -13,34 +13,24 @@ import {
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 
-import Alert from '../../../Misc/Alert';
-import Asteriq from '../../../Misc/Asteriq';
-import MyModal from '../../../Misc/Modal';
+import Alert from '../../../../Misc/Alert';
+import Asteriq from '../../../../Misc/Asteriq';
+import MyModal from '../../../../Misc/Modal';
 import { colors } from '@/constants/themes';
 import { useAxios } from '@/client/hooks/helpers';
 import { errMessage } from '@/client/utils/helpers';
-import { SubmitBtn } from '../../../Misc/form';
+import { SubmitBtn } from '../../../../Misc/form';
 import * as constants from '@/constants/Bundles';
-import {
-  defaultForm,
-  getPlan,
-  services,
-  types_opt,
-  defaultPlans,
-  findPlanById,
-} from './helpers';
+import { defaultForm, findPlan, getPlan, defaultPlans } from './helpers';
 
 const { white } = colors;
-
-let _service;
-
-let prev_type;
-let prev_plan_id;
 
 const Inputs = ({ data }) => {
   const form = useForm();
 
   const { axios, isLoading } = useAxios();
+
+  const [network, setNetwork] = React.useState('');
 
   const [is_disabled, setDisabled] = React.useState(false);
 
@@ -64,13 +54,13 @@ const Inputs = ({ data }) => {
 
   const { register, handleSubmit, formState, setValue, reset, watch } = form;
 
-  const { text, service } = myForm;
+  const { text } = myForm;
 
   const { errors } = formState;
 
-  const values = watch(['type', 'plan_id']) || [];
+  const values = watch(['type', 'plan']) || [];
 
-  const [type, plan_id] = values;
+  const [type] = values;
 
   const isDisabled = myForm.pin.length <= 3;
 
@@ -86,10 +76,11 @@ const Inputs = ({ data }) => {
     setMyForm({
       ...e,
       amount,
+      network,
       pin: '',
       provider,
       is_disabled,
-      text: `${_service}/${e.title}`,
+      text: `Data Bundle/${e.title}`,
     });
 
     onOpen();
@@ -137,35 +128,21 @@ const Inputs = ({ data }) => {
   }, [data]);
 
   React.useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const options = {
-        type,
-        plan_id,
-        bundles: plans,
-      };
+    const [type, plan] = values;
+    const options = {
+      type,
+      plan,
+      network,
+      provider,
+      bundles: plans,
+    };
 
-      if (type && plan_id) {
-        const isSame = prev_plan_id === plan_id;
+    const selected = findPlan(options);
 
-        if (type !== prev_type || !isSame) {
-          prev_type = type;
-          prev_plan_id = plan_id;
-
-          const selected = findPlanById(options);
-
-          if (selected) {
-            setPlan(selected);
-          } else {
-            const { plan_id, ..._plan } = defaultPlans;
-
-            setPlan(() => ({ ..._plan }));
-          }
-        }
-      }
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, [type, plan_id]);
+    if (selected) {
+      setPlan(selected);
+    }
+  }, [values]);
 
   return (
     <>
@@ -190,18 +167,17 @@ const Inputs = ({ data }) => {
 
           {/*************** NETWORK SECTION ********************/}
           <FormLabel fontWeight={700} mt={4}>
-            Service <Asteriq>*</Asteriq>
+            Network <Asteriq>*</Asteriq>
           </FormLabel>
           <Select
             isRequired
             size={'lg'}
-            placeholder={'--Select Service Here--'}
-            onChange={({ target }) => {
-              formHandler('service', target.value);
-              _service = target.value;
+            placeholder={'--Select Network Here--'}
+            onChange={(e) => {
+              setNetwork(e.target.value);
             }}
           >
-            {services.map(({ id, value }) => (
+            {constants.networks.map(({ id, value }) => (
               <option value={value} key={id}>
                 {value}
               </option>
@@ -209,30 +185,46 @@ const Inputs = ({ data }) => {
           </Select>
 
           {/*************** TYPE SECTION ********************/}
-          {service && (
-            <>
-              <FormLabel fontWeight={700} mt={4}>
-                type <Asteriq>*</Asteriq>
-              </FormLabel>
-              <Select
-                size={'lg'}
-                placeholder={`--Select type here--`}
-                {...register('type', {
-                  required: 'This is required!',
-                })}
-              >
-                {types_opt[service].map(({ title, value }) => (
-                  <option key={value} value={value}>
-                    {title}
-                  </option>
-                ))}
-              </Select>
-            </>
-          )}
+          <FormLabel fontWeight={700} mt={4}>
+            type <Asteriq>*</Asteriq>
+          </FormLabel>
+          <Select
+            size={'lg'}
+            placeholder={`--Select type here--`}
+            {...register('type', {
+              required: 'This is required!',
+            })}
+          >
+            {constants.types.map(({ title, value }) => (
+              <option key={value} value={value}>
+                {title}
+              </option>
+            ))}
+          </Select>
 
+          {/*************** PRICE SECTION ********************/}
           {type && (
             <>
               {/*************** PLAN SECTION ********************/}
+
+              <FormLabel fontWeight={700} mt={4}>
+                Plan <Asteriq>*</Asteriq>
+              </FormLabel>
+              <Select
+                size={'lg'}
+                isRequired
+                placeholder={'--Select Plan Here--'}
+                {...register('plan', {
+                  required: 'This is required!',
+                })}
+              >
+                {constants.plans.map(({ id, value, label }) => (
+                  <option value={value} key={id}>
+                    {network} - {label}
+                  </option>
+                ))}
+              </Select>
+
               {getPlan().map((key) => (
                 <FormControl isInvalid={errors[key]} key={key}>
                   <FormLabel fontWeight={700} mt={4}>

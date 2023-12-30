@@ -20,13 +20,13 @@ const Automated = ({ data: { accounts, isOpen } }) => {
             AUTOMATED FUNDING
           </Text>
 
-          <Text>
+          {/*    <Text>
             We currently do not support Automated Funding as we're very new to
             this process but we're working tirelessly to bring it in the few
             coming weeks. Thanks for your understanding!!
-          </Text>
+          </Text> */}
 
-          {/*  {accounts && (
+          {accounts && (
             <Text>
               Thess accounts are uniquely assigned to only you, and your Wallet
               will be Credited Automatically once you transfer money into any
@@ -43,7 +43,7 @@ const Automated = ({ data: { accounts, isOpen } }) => {
                   bank={i.bankName}
                   charge={'1.5% on the amount'}
                   nuban={i.accountNumber}
-                  accountName={'THRITELECOMSNG-' + i.accountName}
+                  accountName={'Choicedata Service-' + i.accountName}
                 />
               ))}
             </>
@@ -52,7 +52,7 @@ const Automated = ({ data: { accounts, isOpen } }) => {
               data={{ isLoading: isGettingAccount, error }}
               isFull={false}
             />
-          )} */}
+          )}
         </Box>
       </Box>
     </Collapse>

@@ -1,4 +1,4 @@
-import { cableTypes, types } from '@/constants/Bundles';
+import { cableTypes } from '@/constants/Bundles';
 
 export const defaultForm = {
   pin: '',
@@ -19,19 +19,9 @@ export const defaultPlans = {
 const fields = ['is_disabled', 'type', 'network', 'provider', 'id'];
 
 export const getPlan = (data) => {
-  const { value = defaultPlans, isData } = data || {};
+  const { value = defaultPlans } = data || {};
 
-  let result;
-
-  if (isData) {
-    const new_fields = [...fields, 'plan'];
-
-    result = Object.keys(value).filter((key) => !new_fields.includes(key));
-  } else {
-    result = Object.keys(value).filter((key) => !fields.includes(key));
-  }
-
-  return result;
+  return Object.keys(value).filter((key) => !fields.includes(key));
 };
 
 export const findPlanById = ({ bundles, plan_id, type }) => {
@@ -44,31 +34,11 @@ export const findPlanById = ({ bundles, plan_id, type }) => {
   return selected;
 };
 
-export const findPlan = (options) => {
-  let selected;
-
-  const { bundles, network, isData, provider, type, plan } = options;
-
-  if (bundles && isData) {
-    selected = bundles.find(
-      (i) =>
-        i.network === network &&
-        i.type === type &&
-        i.provider === provider &&
-        i.plan === plan
-    );
-  } else if (bundles) {
-    selected = findPlanById(options);
-  }
-
-  return selected;
-};
-
 export const services = [
-  {
+  /* {
     id: '1',
     value: 'Data Bundle',
-  },
+  }, */
   /* {
     id: '2',
     value: 'Educational Pin',
@@ -100,7 +70,6 @@ const electricity_type = [
 ];
 
 export const types_opt = {
-  'Data Bundle': types,
   'Cable Subs': cableTypes,
   // 'Educational Pin': edu_type,
   Electricity: electricity_type,
