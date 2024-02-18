@@ -27,6 +27,7 @@ export const myData = {
   first_name: true,
   created_at: true,
   transaction_pin: true,
+  is_nin_verified: true,
   is_email_verified: true,
   data_transactions_count: true,
   airtime_transactions_count: true,

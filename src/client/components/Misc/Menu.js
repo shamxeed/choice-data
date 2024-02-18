@@ -24,7 +24,7 @@ const MyMenu = () => {
 
   const { onOpen, ...props } = useDisclosure();
 
-  const { transaction_pin, is_email_verified } = user || {};
+  const { transaction_pin, is_email_verified, is_nin_verified } = user || {};
 
   const title = transaction_pin
     ? 'Change Transaction Pin'
@@ -36,6 +36,10 @@ const MyMenu = () => {
     } else if (title === 'My Email') {
       if (!is_email_verified) {
         router.push('/auth/verify-email');
+      }
+    } else if (title === 'My NIN') {
+      if (!is_nin_verified) {
+        router.push('/auth/verify-nin');
       }
     } else {
       onOpen();
@@ -61,6 +65,16 @@ const MyMenu = () => {
                   }}
                 >
                   {is_email_verified ? 'Verified 👌' : 'Click to verify'}
+                </em>
+              )}
+              {title === 'My NIN' && (
+                <em
+                  style={{
+                    fontSize: 14,
+                    color: is_nin_verified ? primary : 'red',
+                  }}
+                >
+                  {is_nin_verified ? 'Verified 👌' : 'Click to verify'}
                 </em>
               )}
             </MenuItem>

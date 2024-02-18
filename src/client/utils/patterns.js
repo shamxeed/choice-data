@@ -29,6 +29,11 @@ export const otp = {
   message: 'Please enter a valid OTP!',
 };
 
+export const nin = {
+  pattern: (value) => value?.trim()?.length === 11,
+  message: 'Please enter a valid NIN!',
+};
+
 export const elevenChars = {
   pattern: (value) => value?.trim()?.length === 11,
   message: 'Please enter a valid ',

@@ -14,6 +14,7 @@ import {
   MdSchool,
   MdSubscriptions,
   MdRefresh,
+  MdOutlineVerifiedUser,
 } from 'react-icons/md';
 
 import {
@@ -108,6 +109,11 @@ export const menuOpts = [
     id: '1a',
     title: 'My Email',
     icon: <MdPerson size={20} color={gray} />,
+  },
+  {
+    id: '4r',
+    title: 'My NIN',
+    icon: <MdOutlineVerifiedUser size={20} color={gray} />,
   },
   {
     id: '2b',
